@@ -9,9 +9,9 @@ class ProjectSerializer(serializers.ModelSerializer):
 class TimerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Timer
-        fields = '__all__'
+        fields = ['project']
         
 class OnholdTimerSerializer(serializers.ModelSerializer):
     class Meta:
         model = OnholdTimer
-        fields = '__all__'
+        exclude = ['end']
