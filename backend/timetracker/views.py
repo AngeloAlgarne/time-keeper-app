@@ -10,6 +10,7 @@ from .serializer import (
     OnholdTimerSerializer
 )
 
+# -------------------- API VIEWS --------------------
 
 class BaseAPIViewClass(views.APIView):
     '''
@@ -98,3 +99,31 @@ class OnholdTimerAPIView(BaseAPIViewClass):
             })
             output.append(record_as_dict)
         return output
+
+
+# -------------------- UPDATE VIEWS --------------------
+
+
+class UpdateProjectAPIView(generics.UpdateAPIView):
+    queryset = Project.objects.all()
+    serializer_class = ProjectSerializer
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.name = request.data.get("name")
+        instance.description = request.data.get("description")
+        instance.save()
+
+        serializer = self.get_serializer(instance)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        return response.Response(serializer.data)
+    
+
+class UpdateTimerAPIView(generics.UpdateAPIView):
+    queryset = Timer.objects.all()
+    serializer_class = TimerSerializer
+
+    def update(self, request, *args, **kwargs):
+        pass
