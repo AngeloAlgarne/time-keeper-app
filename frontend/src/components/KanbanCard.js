@@ -1,8 +1,8 @@
 import './Kanban.css'
 
-function Card({ children }) {
+function Card({ className, children }) {
     return (
-      <div className="kanban-card">
+      <div className={className + " kanban-card"}>
         {children}
       </div>
     );

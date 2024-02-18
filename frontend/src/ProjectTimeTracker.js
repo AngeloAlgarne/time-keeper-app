@@ -5,32 +5,38 @@ import Kanban from "./components/Kanban";
 import Board from "./components/KanbanBoard";
 import Card from "./components/KanbanCard";
 
-
 class ProjectTimeTracker extends React.Component {
   state = { projects: [], timers: [], onhold: [] };
 
   componentDidMount() {
     let projectsUrl = "http://localhost:8000/projects";
     let timersUrl = "http://localhost:8000/timers";
+    let onholdUrl = "http://localhost:8000/onhold";
 
     axios
+      // Fetch all projects
       .get(projectsUrl)
       .then((response) => {
-        // fetch all projects
         this.setState({
           ...this.state,
           projects: response.data,
         });
+        // Fetch all projects with timers
         return axios.get(timersUrl);
       })
       .then((response) => {
-        // fetch all projects with timers
         this.setState({
           ...this.state,
           timers: response.data,
         });
-
-        console.log(this.state);
+        // Fetch all onhold project timers
+        return axios.get(onholdUrl);
+      })
+      .then((response) => {
+        this.setState({
+          ...this.state,
+          onhold: response.data,
+        });
       })
       .catch((error) => {});
   }
@@ -50,7 +56,7 @@ class ProjectTimeTracker extends React.Component {
           ))}
         </Board>
         <Board boardName={"Ongoing"}>
-          <Card>
+          <Card className="ongoing-card">
             {this.state.timers.map((timer, id) => (
               <div key={id}>
                 <h2>{timer.project_name}</h2>
@@ -59,13 +65,28 @@ class ProjectTimeTracker extends React.Component {
                 <p className="small-font">
                   Created at {timer.project_created_at}
                 </p>
+                <p className="small-font">
+                  Timer started at {timer.timer_created_at}
+                </p>
               </div>
             ))}
           </Card>
         </Board>
         <Board boardName={"On Hold"}>
-          <Card>
-            <p>HELLO</p>
+          <Card className="onhold-card">
+            {this.state.onhold.map((timer, id) => (
+              <div key={id}>
+                <h2>{timer.project_name}</h2>
+                <h3>{timer.duration}</h3>
+                <p>{timer.project_description}</p>
+                <p className="small-font">
+                  Created at {timer.project_created_at}
+                </p>
+                <p className="small-font">
+                  Timer started at {timer.timer_created_at}
+                </p>
+              </div>
+            ))}
           </Card>
         </Board>
       </Kanban>

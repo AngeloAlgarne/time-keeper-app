@@ -23,6 +23,14 @@
     margin-bottom: 20px;
 }
 
+.ongoing-card {
+    background-color: #21481A;
+}
+
+.onhold-card {
+    background-color: #594B00;
+}
+
 .small-font {
     font-size: small;
 }
