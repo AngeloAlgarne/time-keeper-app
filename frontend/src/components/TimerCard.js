@@ -27,7 +27,7 @@ function TimerCard({ className, timer, onClickComplete }) {
         {timer.completed_at ? (
           <></>
         ) : (
-          <button onClick={onClickComplete}>Complete</button>
+          <button onClick={() => onClickComplete(timer.id)}>Complete</button>
         )}
       </div>
     );

@@ -15,7 +15,7 @@ const urls = {
 };
 
 export default class ProjectTimeTracker extends React.Component {
-  state = { projects: [], timers: [], completed: [] };
+  state = { projects: [], timers: [], completed: [], newProject: {} };
 
   componentDidMount() {
     axios
@@ -32,7 +32,7 @@ export default class ProjectTimeTracker extends React.Component {
       .then((response) => {
         this.setState({
           ...this.state,
-          onhold: response.data,
+          timers: response.data,
         });
         // Fetch all completed projects
         return axios.get(urls.completed);
@@ -47,8 +47,34 @@ export default class ProjectTimeTracker extends React.Component {
   }
 
   render() {
-    const handleStart = () => {
-      axios.post(urls.timers).then((response) => {
+    const setNewProjectValue = (name, description) => {
+      this.setState({
+        ...this.state,
+        newProject: {
+          name: name,
+          description: description,
+        },
+      });
+    };
+
+    const onChangeNewProjectName = (e) =>
+      setNewProjectValue(e.target.value, this.state.newProject.description);
+    const onChangeNewProjectDescription = (e) =>
+      setNewProjectValue(this.state.newProject.name, e.target.value);
+
+    const handleNewProject = (data) => {
+      axios
+        .post(urls.projects, {
+          name: data.name,
+          description: data.description,
+        })
+        .then((response) => {
+          window.location.reload();
+        });
+    };
+
+    const handleStart = (projectId) => {
+      axios.post(urls.timers, { project: projectId }).then((response) => {
         window.location.reload();
       });
     };
@@ -57,8 +83,8 @@ export default class ProjectTimeTracker extends React.Component {
 
     const handleResume = () => {};
 
-    const handleComplete = () => {
-      axios.put(urls.timers).then((response) => {
+    const handleComplete = (timerId) => {
+      axios.put(urls.completed, { timer: timerId}).then((response) => {
         window.location.reload();
       });
     };
@@ -80,6 +106,20 @@ export default class ProjectTimeTracker extends React.Component {
               </div>
             </Card>
           ))}
+          <Card>
+            <form>
+              <h2>New Project</h2>
+              <div className="input-div">
+                <input type="text" onChange={onChangeNewProjectName} placeholder="Name"/>
+                <input type="text" onChange={onChangeNewProjectDescription} placeholder="Description"/>
+              </div>
+              <div className="button-div">
+                <button onClick={() => handleNewProject(this.state.newProject)}>
+                  Create
+                </button>
+              </div>
+            </form>
+          </Card>
         </Board>
         <TimerBoard
           boardName={"Ongoing"}
