@@ -51,19 +51,25 @@ class ProjectTimeTracker extends React.Component {
   }
 
   render() {
+    const msToHours = (milliseconds) => {
+      let seconds = Math.floor(milliseconds / 1000);
+      let minutes = Math.floor(seconds / 60);
+      let hours = Math.floor(minutes / 60);
+      return hours;
+    };
 
     const formatDate = (dateString, withTime) => {
       let options = {
         year: "numeric",
         month: "numeric",
         day: "numeric",
-      }
+      };
 
       if (withTime) {
         options.hour = "numeric";
         options.minute = "numeric";
       }
-      
+
       return new Date(dateString).toLocaleString("en-US", options);
     };
 
@@ -87,7 +93,7 @@ class ProjectTimeTracker extends React.Component {
             <Card className={timer.onhold ? "" : "ongoing-card"} key={id}>
               <div>
                 <h2>{timer.project_name}</h2>
-                <h3 className="badge">{timer.duration_ms} hours</h3>
+                <h3 className="badge">{msToHours(timer.duration_ms)} hours</h3>
                 <p>{timer.project_description}</p>
                 <p className="small-font">
                   Started at {formatDate(timer.created_at, true)}
@@ -103,7 +109,7 @@ class ProjectTimeTracker extends React.Component {
             <Card className="completed-card" key={id}>
               <div>
                 <h2>{timer.project_name}</h2>
-                <h3 className="badge">{timer.duration} hours</h3>
+                <h3 className="badge">{msToHours(timer.duration)} hours</h3>
                 <p>{timer.project_description}</p>
                 <p className="small-font">
                   Started at {formatDate(timer.created_at, true)}
