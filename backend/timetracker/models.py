@@ -26,6 +26,9 @@ class Timer(models.Model):
     
 
 class OnholdTimer(models.Model):
+    '''
+    Unused model
+    '''
     main_timer = models.ForeignKey(Timer, on_delete=models.CASCADE)
     start = models.DateTimeField(auto_now_add=True)
     end = models.DateTimeField(null=True, blank=True)
