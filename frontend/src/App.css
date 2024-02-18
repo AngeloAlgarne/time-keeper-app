@@ -39,7 +39,14 @@
 
 /* Additional CSS */
 
-button {
+.button-div {
+  display: flex;
+  justify-content: end;
+  width: 100%;
+  margin-bottom: 0.75em;
+}
+
+.button-div button {
   padding: 5px 15px;
   cursor: pointer;
   background-color: rgba(255,255,255, 0.3);
@@ -50,13 +57,22 @@ button {
   transition: all 0.2s ease-out;
 }
 
-button:hover {
+.button-div button:hover {
   background-color: rgba(0,0,0, 0.8);;
 }
 
-.button-div {
+
+.input-div {
   display: flex;
-  justify-content: end;
-  width: 100%;
-  margin-bottom: 0.75em;
+  flex-direction: column;
+  gap: 10px;
+  margin: 20px 5px;
+}
+
+.input-div input {
+  color: white;
+  padding: 10px;
+  background-color: #282c34;
+  border-radius: 5px;
+  border: 0;
 }
