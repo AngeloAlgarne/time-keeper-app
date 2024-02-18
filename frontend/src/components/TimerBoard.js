@@ -7,7 +7,7 @@ function TimerBoard({ boardName, timers, onClickComplete }) {
       <h3 className="board-name">{boardName}</h3>
       {timers.map((timer, id) => (
         <TimerCard
-          className={timer.onhold ? "" : "ongoing-card"}
+          className={timer.completed_at ? "completed-card" : "ongoing-card"}
           key={id}
           timer={timer}
           onClickComplete={onClickComplete}
