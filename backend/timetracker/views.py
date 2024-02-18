@@ -107,7 +107,7 @@ class OnholdTimerAPIView(BaseAPIViewClass):
         for record in queryset:
             record_as_dict = model_to_dict(record)
             record_as_dict.update({
-                'duration_ms': record.main_timer.duration_ms,
+                'duration_seconds': record.main_timer.duration_seconds,
                 'created_at': record.main_timer.created_at,
                 'project_name': record.main_timer.project.name,
                 'project_description': record.main_timer.project.description,
@@ -150,10 +150,10 @@ class CompletedTimerAPIView(BaseAPIViewClass):
             return HttpResponse(status=500)
         
         date_now = datetime.now(timezone.utc)
-        timer.duration_ms = (date_now - timer.created_at).seconds
+        timer.duration_seconds = (date_now - timer.created_at).seconds
         timer.completed_at = date_now
         
-        timer.save(update_fields=['duration_ms', 'completed_at'])
+        timer.save(update_fields=['duration_seconds', 'completed_at'])
         
         serializer = self.serializer_class(timer)
         return response.Response(serializer.data)
