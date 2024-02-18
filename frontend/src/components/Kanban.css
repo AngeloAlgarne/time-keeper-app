@@ -12,7 +12,7 @@
 
 .kanban-board {
     min-width: 300px;
-    width: 25vw;
+    width: 20vw;
 }
 
 .kanban-card {
@@ -21,6 +21,14 @@
     border-radius: 10px;
     font-size: medium;
     margin-bottom: 20px;
+}
+
+.badge {
+    padding: 5px 15px;
+    font-weight: bold;
+    background-color: rgba(0, 0, 0, 0.5);
+    width: fit-content;
+    border-radius: 10px;
 }
 
 .ongoing-card {

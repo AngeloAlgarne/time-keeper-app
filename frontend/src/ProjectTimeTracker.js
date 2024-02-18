@@ -6,12 +6,13 @@ import Board from "./components/KanbanBoard";
 import Card from "./components/KanbanCard";
 
 class ProjectTimeTracker extends React.Component {
-  state = { projects: [], timers: [], onhold: [] };
+  state = { projects: [], timers: [], onhold: [], completed: [] };
 
   componentDidMount() {
     let projectsUrl = "http://localhost:8000/projects";
     let timersUrl = "http://localhost:8000/timers";
     let onholdUrl = "http://localhost:8000/onhold";
+    let completedUrl = "http://localhost:8000/onhold";
 
     axios
       // Fetch all projects
@@ -36,6 +37,14 @@ class ProjectTimeTracker extends React.Component {
         this.setState({
           ...this.state,
           onhold: response.data,
+        });
+        // Fetch all completed projects
+        return axios.get(completedUrl);
+      })
+      .then((response) => {
+        this.setState({
+          ...this.state,
+          completed: response.data,
         });
       })
       .catch((error) => {});
@@ -72,12 +81,12 @@ class ProjectTimeTracker extends React.Component {
             </Card>
           ))}
         </Board>
-        <Board key={2} boardName={"Ongoing"}>
+        <Board boardName={"Ongoing"}>
           {this.state.timers.map((timer, id) => (
             <Card className="ongoing-card" key={id}>
               <div>
                 <h2>{timer.project_name}</h2>
-                <h3>{timer.duration}</h3>
+                <h3 className="badge">{timer.duration} hours</h3>
                 <p>{timer.project_description}</p>
                 <p className="small-font">
                   Started at {formatDate(timer.created_at, true)}
@@ -88,15 +97,33 @@ class ProjectTimeTracker extends React.Component {
             </Card>
           ))}
         </Board>
-        <Board key={3} boardName={"On Hold"}>
+        <Board boardName={"On Hold"}>
           {this.state.onhold.map((timer, id) => (
             <Card className="onhold-card" key={id}>
               <div>
                 <h2>{timer.project_name}</h2>
-                <h3>{timer.duration}</h3>
+                <h3 className="badge">{timer.duration} hours</h3>
                 <p>{timer.project_description}</p>
                 <p className="small-font">
                   Started at {formatDate(timer.created_at, true)}
+                  <br></br>
+                  Created on {formatDate(timer.project_created_at)}
+                </p>
+              </div>
+            </Card>
+          ))}
+        </Board>
+        <Board boardName={"Completed"}>
+          {this.state.completed.map((timer, id) => (
+            <Card key={id}>
+              <div>
+                <h2>{timer.project_name}</h2>
+                <h3 className="badge">{timer.duration} hours</h3>
+                <p>{timer.project_description}</p>
+                <p className="small-font">
+                  Started at {formatDate(timer.created_at, true)}
+                  <br></br>
+                  Completed at {formatDate(timer.completed_at, true)}
                   <br></br>
                   Created on {formatDate(timer.project_created_at)}
                 </p>
