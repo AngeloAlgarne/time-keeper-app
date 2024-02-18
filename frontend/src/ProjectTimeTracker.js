@@ -42,52 +42,67 @@ class ProjectTimeTracker extends React.Component {
   }
 
   render() {
+    const formatDate = (dateString, withTime) => {
+      let options = {
+        year: "numeric",
+        month: "numeric",
+        day: "numeric",
+      }
+
+      if (withTime) {
+        options.hour = "numeric";
+        options.minute = "numeric";
+      }
+      
+      return new Date(dateString).toLocaleString("en-US", options);
+    };
+
     return (
       <Kanban kanbanName={"Project Time Tracker"}>
         <Board boardName={"Projects"}>
           {this.state.projects.map((project, id) => (
-            <Card>
-              <div key={id}>
+            <Card key={id}>
+              <div>
                 <h2>{project.name}</h2>
                 <p>{project.description}</p>
-                <p className="small-font">Created at {project.created_at}</p>
+                <p className="small-font">
+                  Created on {formatDate(project.created_at)}
+                </p>
               </div>
             </Card>
           ))}
         </Board>
-        <Board boardName={"Ongoing"}>
-          <Card className="ongoing-card">
-            {this.state.timers.map((timer, id) => (
-              <div key={id}>
+        <Board key={2} boardName={"Ongoing"}>
+          {this.state.timers.map((timer, id) => (
+            <Card className="ongoing-card" key={id}>
+              <div>
                 <h2>{timer.project_name}</h2>
                 <h3>{timer.duration}</h3>
                 <p>{timer.project_description}</p>
                 <p className="small-font">
-                  Created at {timer.project_created_at}
-                </p>
-                <p className="small-font">
-                  Timer started at {timer.timer_created_at}
+                  Started at {formatDate(timer.created_at, true)}
+                  <br></br>
+                  Created on {formatDate(timer.project_created_at)}
                 </p>
               </div>
-            ))}
-          </Card>
+            </Card>
+          ))}
         </Board>
-        <Board boardName={"On Hold"}>
-          <Card className="onhold-card">
-            {this.state.onhold.map((timer, id) => (
-              <div key={id}>
+        <Board key={3} boardName={"On Hold"}>
+          {this.state.onhold.map((timer, id) => (
+            <Card className="onhold-card" key={id}>
+              <div>
                 <h2>{timer.project_name}</h2>
                 <h3>{timer.duration}</h3>
                 <p>{timer.project_description}</p>
                 <p className="small-font">
-                  Created at {timer.project_created_at}
-                </p>
-                <p className="small-font">
-                  Timer started at {timer.timer_created_at}
+                  Started at {formatDate(timer.created_at, true)}
+                  <br></br>
+                  Created on {formatDate(timer.project_created_at)}
                 </p>
               </div>
-            ))}
-          </Card>
+            </Card>
+          ))}
         </Board>
       </Kanban>
     );
