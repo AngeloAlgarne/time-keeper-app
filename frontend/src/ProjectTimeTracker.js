@@ -32,7 +32,7 @@ export default class ProjectTimeTracker extends React.Component {
       .then((response) => {
         this.setState({
           ...this.state,
-          onhold: response.data,
+          timers: response.data,
         });
         // Fetch all completed projects
         return axios.get(urls.completed);
