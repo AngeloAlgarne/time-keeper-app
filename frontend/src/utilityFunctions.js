@@ -5,6 +5,13 @@ export const msToHours = (milliseconds) => {
   return hours;
 };
 
+export const secondsToHours = (seconds) => {
+  let minutes = Math.floor(seconds / 60);
+  let hours = Math.floor(minutes / 60);
+  return hours;
+};
+
+
 export const formatDate = (dateString, withTime) => {
   let options = {
     year: "numeric",

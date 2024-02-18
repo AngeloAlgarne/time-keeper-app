@@ -1,6 +1,6 @@
 import "./Kanban.css";
 
-import { msToHours, formatDate } from "../utilityFunctions";
+import { secondsToHours, formatDate } from "../utilityFunctions";
 
 function TimerCard({ className, timer, onClickComplete }) {
   const SmallNote = () => {
@@ -36,7 +36,7 @@ function TimerCard({ className, timer, onClickComplete }) {
   return (
     <div className={className + " kanban-card"}>
       <h2>{timer.project_name}</h2>
-      <h3 className="badge">{msToHours(timer.duration_ms)} hours</h3>
+      <h3 className="badge">{secondsToHours(timer.duration_ms)} hours</h3>
       <p>{timer.project_description}</p>
       <SmallNote />
       <Buttons />
