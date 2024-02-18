@@ -51,6 +51,7 @@ class ProjectTimeTracker extends React.Component {
   }
 
   render() {
+
     const formatDate = (dateString, withTime) => {
       let options = {
         year: "numeric",
@@ -83,26 +84,10 @@ class ProjectTimeTracker extends React.Component {
         </Board>
         <Board boardName={"Ongoing"}>
           {this.state.timers.map((timer, id) => (
-            <Card className="ongoing-card" key={id}>
+            <Card className={timer.onhold ? "" : "ongoing-card"} key={id}>
               <div>
                 <h2>{timer.project_name}</h2>
-                <h3 className="badge">{timer.duration} hours</h3>
-                <p>{timer.project_description}</p>
-                <p className="small-font">
-                  Started at {formatDate(timer.created_at, true)}
-                  <br></br>
-                  Created on {formatDate(timer.project_created_at)}
-                </p>
-              </div>
-            </Card>
-          ))}
-        </Board>
-        <Board boardName={"On Hold"}>
-          {this.state.onhold.map((timer, id) => (
-            <Card className="onhold-card" key={id}>
-              <div>
-                <h2>{timer.project_name}</h2>
-                <h3 className="badge">{timer.duration} hours</h3>
+                <h3 className="badge">{timer.duration_ms} hours</h3>
                 <p>{timer.project_description}</p>
                 <p className="small-font">
                   Started at {formatDate(timer.created_at, true)}
@@ -115,7 +100,7 @@ class ProjectTimeTracker extends React.Component {
         </Board>
         <Board boardName={"Completed"}>
           {this.state.completed.map((timer, id) => (
-            <Card key={id}>
+            <Card className="completed-card" key={id}>
               <div>
                 <h2>{timer.project_name}</h2>
                 <h3 className="badge">{timer.duration} hours</h3>
