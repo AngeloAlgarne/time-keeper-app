@@ -8,33 +8,26 @@ import TimerBoard from "./components/TimerBoard";
 
 import { formatDate } from "./utilityFunctions";
 
+const urls = {
+  projects: "http://localhost:8000/projects",
+  timers: "http://localhost:8000/timers",
+  completed: "http://localhost:8000/completed",
+};
+
 export default class ProjectTimeTracker extends React.Component {
-  state = { projects: [], timers: [], onhold: [], completed: [] };
+  state = { projects: [], timers: [], completed: [] };
 
   componentDidMount() {
-    let projectsUrl = "http://localhost:8000/projects";
-    let timersUrl = "http://localhost:8000/timers";
-    let onholdUrl = "http://localhost:8000/onhold";
-    let completedUrl = "http://localhost:8000/onhold";
-
     axios
       // Fetch all projects
-      .get(projectsUrl)
+      .get(urls.projects)
       .then((response) => {
         this.setState({
           ...this.state,
           projects: response.data,
         });
         // Fetch all projects with timers
-        return axios.get(timersUrl);
-      })
-      .then((response) => {
-        this.setState({
-          ...this.state,
-          timers: response.data,
-        });
-        // Fetch all onhold project timers
-        return axios.get(onholdUrl);
+        return axios.get(urls.timers);
       })
       .then((response) => {
         this.setState({
@@ -42,7 +35,7 @@ export default class ProjectTimeTracker extends React.Component {
           onhold: response.data,
         });
         // Fetch all completed projects
-        return axios.get(completedUrl);
+        return axios.get(urls.completed);
       })
       .then((response) => {
         this.setState({
@@ -54,13 +47,21 @@ export default class ProjectTimeTracker extends React.Component {
   }
 
   render() {
-    const handleStart = () => {};
+    const handleStart = () => {
+      axios.post(urls.timers).then((response) => {
+        window.location.reload();
+      });
+    };
 
     const handlePause = () => {};
 
     const handleResume = () => {};
 
-    const handleComplete = () => {};
+    const handleComplete = () => {
+      axios.put(urls.timers).then((response) => {
+        window.location.reload();
+      });
+    };
 
     return (
       <Kanban kanbanName={"Project Time Tracker"}>
@@ -74,7 +75,7 @@ export default class ProjectTimeTracker extends React.Component {
                   Created on {formatDate(project.created_at)}
                 </p>
                 <div className="button-div">
-                  <button onClick={handleStart}>Start</button>
+                  <button onClick={() => handleStart(project.id)}>Start</button>
                 </div>
               </div>
             </Card>
@@ -85,10 +86,7 @@ export default class ProjectTimeTracker extends React.Component {
           timers={this.state.timers}
           onClickComplete={handleComplete}
         />
-        <TimerBoard
-          boardName={"Completed"}
-          timers={this.state.completed}
-        />
+        <TimerBoard boardName={"Completed"} timers={this.state.completed} />
       </Kanban>
     );
   }

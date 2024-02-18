@@ -24,7 +24,7 @@ function TimerCard({ className, timer, onClickComplete }) {
   const Buttons = () => {
     return (
       <div className="button-div">
-        {completed ? (
+        {timer.completed_at ? (
           <></>
         ) : (
           <button onClick={onClickComplete}>Complete</button>
