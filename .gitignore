@@ -4,6 +4,3 @@ backend/virtualenv/
 
 # Node modules
 frontend/node_modules/
-
-# Backend env file
-backend/backend/.env
