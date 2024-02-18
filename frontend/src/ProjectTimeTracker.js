@@ -79,9 +79,8 @@ export default class ProjectTimeTracker extends React.Component {
       });
     };
 
-    const handlePause = () => {};
-
-    const handleResume = () => {};
+    // const handlePause = () => {};
+    // const handleResume = () => {};
 
     const handleComplete = (timerId) => {
       axios.put(urls.completed, { timer: timerId}).then((response) => {
