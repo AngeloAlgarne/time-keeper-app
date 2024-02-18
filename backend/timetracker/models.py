@@ -14,7 +14,7 @@ class Timer(models.Model):
     active_onhold = models.ForeignKey('OnholdTimer', on_delete=models.PROTECT, null=True, blank=True)
     duration_ms = models.BigIntegerField(default=0, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    finished_at = models.DateTimeField(null=True, blank=True)
+    completed_at = models.DateTimeField(null=True, blank=True)
     
 
 class OnholdTimer(models.Model):
