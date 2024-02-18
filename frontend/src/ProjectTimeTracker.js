@@ -83,8 +83,8 @@ export default class ProjectTimeTracker extends React.Component {
 
     const handleResume = () => {};
 
-    const handleComplete = () => {
-      axios.put(urls.timers).then((response) => {
+    const handleComplete = (timerId) => {
+      axios.put(urls.completed, { timer: timerId}).then((response) => {
         window.location.reload();
       });
     };
