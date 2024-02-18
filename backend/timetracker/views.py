@@ -94,27 +94,28 @@ class TimerAPIView(BaseAPIViewClass):
         
 
 class OnholdTimerAPIView(BaseAPIViewClass):
+    pass
     '''
     This APIView class is unused. For scalability purposes, this is good.
     But for this first version, a simpler process flow is needed. 
     '''
-    model_class = OnholdTimer
-    serializer_class = OnholdTimerSerializer
+    # model_class = OnholdTimer
+    # serializer_class = OnholdTimerSerializer
     
-    def get_parse_objects(self) -> models.QuerySet:
-        queryset = Timer.objects.filter(active_onhold__isnull=False)        
-        output = []
-        for record in queryset:
-            record_as_dict = model_to_dict(record)
-            record_as_dict.update({
-                'duration_seconds': record.main_timer.duration_seconds,
-                'created_at': record.main_timer.created_at,
-                'project_name': record.main_timer.project.name,
-                'project_description': record.main_timer.project.description,
-                'project_created_at': record.main_timer.project.created_at,
-            })
-            output.append(record_as_dict)
-        return output
+    # def get_parse_objects(self) -> models.QuerySet:
+    #     queryset = Timer.objects.filter(active_onhold__isnull=False)        
+    #     output = []
+    #     for record in queryset:
+    #         record_as_dict = model_to_dict(record)
+    #         record_as_dict.update({
+    #             'duration_seconds': record.main_timer.duration_seconds,
+    #             'created_at': record.main_timer.created_at,
+    #             'project_name': record.main_timer.project.name,
+    #             'project_description': record.main_timer.project.description,
+    #             'project_created_at': record.main_timer.project.created_at,
+    #         })
+    #         output.append(record_as_dict)
+    #     return output
 
 
 class CompletedTimerAPIView(BaseAPIViewClass):
