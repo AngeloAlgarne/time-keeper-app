@@ -19,6 +19,9 @@ from .serializer import (
 
 
 class LoginAPIView(views.APIView):
+    model_class:models.Model = User
+    serializer_class:serializers.ModelSerializer = UserSerializer
+        
     def post(self, request):
         user = get_object_or_404(User, username=request.data['username'])
         if not user.check_password(request.data['password']):
@@ -29,6 +32,9 @@ class LoginAPIView(views.APIView):
 
 
 class SignUpAPIView(views.APIView):
+    model_class:models.Model = User
+    serializer_class:serializers.ModelSerializer = UserSerializer
+    
     def post(self, request):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
@@ -41,7 +47,10 @@ class SignUpAPIView(views.APIView):
         return response.Response(serializer.errors, status=status.HTTP_200_OK)
     
 
-class BaseAPIViewClass(LoginRequiredMixin, views.APIView):
+class BaseAPIViewClass(
+    # LoginRequiredMixin, 
+    views.APIView
+):
     '''
     A template class for the main api views.\n
     Post method needs to be overriden. Variables `model_class` and `serializer_class` are required.\n
@@ -50,6 +59,7 @@ class BaseAPIViewClass(LoginRequiredMixin, views.APIView):
     model_class:models.Model = None
     serializer_class:serializers.ModelSerializer = None
 
+    # login_url = 'login'
     
     def get_parse_objects(self, queryset:models.QuerySet) -> models.QuerySet:
         '''
@@ -158,7 +168,6 @@ class CompletedTimerAPIView(BaseAPIViewClass):
         output = []
         for record in queryset:
             record_as_dict = model_to_dict(record)
-            print(record.compute_duration_seconds())
             record_as_dict.update({
                 # "onhold": bool(record.active_onhold),
                 "duration_seconds": record.compute_duration_seconds(),
