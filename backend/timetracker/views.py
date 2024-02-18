@@ -1,6 +1,8 @@
-# from django.shortcuts import render
+from datetime import datetime, timezone
+
 from django.forms.models import model_to_dict
 from django.db import models
+from django.http import HttpResponse
 from rest_framework import views, response, serializers, generics
 
 from .models import Project, Timer, OnholdTimer
@@ -121,3 +123,27 @@ class CompletedTimerAPIView(TimerAPIView):
     def get_parse_objects(self, queryset:models.QuerySet) -> models.QuerySet:
         queryset = queryset.filter(completed_at__isnull=False)
         return super().get_parse_objects(queryset)
+    
+    def put(self, request):
+        '''
+        Process PUT requests
+        '''
+        
+        # Fetch timer
+        try:
+            timer = Timer.objects.get(id=request.data.get('timer'))
+        except Timer.DoesNotExist:
+            return HttpResponse(status=500)
+        
+        # Process the completion data
+        # processed_data = {**request.data}
+        # processed_data.pop('timer')
+        
+        date_now = datetime.now(timezone.utc)
+        timer.duration_ms = (date_now - timer.created_at).seconds
+        timer.completed_at = date_now
+        
+        timer.save(update_fields=['duration_ms', 'completed_at'])
+        
+        serializer = self.serializer_class(timer)
+        return response.Response(serializer.data)
