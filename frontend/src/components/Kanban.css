@@ -1,0 +1,44 @@
+.kanban-container {
+    min-height: 100vh;
+}
+
+.kanban {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 30px;
+    text-align: start;
+}
+
+.kanban-board {
+    min-width: 300px;
+    width: 20vw;
+}
+
+.kanban-card {
+    box-shadow: 1px 1px 30px #111;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: medium;
+    margin-bottom: 20px;
+}
+
+.badge {
+    padding: 5px 15px;
+    font-weight: bold;
+    background-color: rgba(0, 0, 0, 0.5);
+    width: fit-content;
+    border-radius: 10px;
+}
+
+.ongoing-card {
+    background-color: #21481A;
+}
+
+.onhold-card {
+    background-color: #594B00;
+}
+
+.small-font {
+    font-size: small;
+}
