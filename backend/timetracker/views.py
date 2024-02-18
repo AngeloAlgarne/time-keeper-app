@@ -5,6 +5,7 @@ from django.forms.models import model_to_dict
 from django.db import models
 from django.http import HttpResponse
 from django.contrib.auth.models import User
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from rest_framework import views, response, serializers, status
 from rest_framework.authtoken.models import Token
@@ -40,7 +41,7 @@ class SignUpAPIView(views.APIView):
         return response.Response(serializer.errors, status=status.HTTP_200_OK)
     
 
-class BaseAPIViewClass(views.APIView):
+class BaseAPIViewClass(LoginRequiredMixin, views.APIView):
     '''
     A template class for the main api views.\n
     Post method needs to be overriden. Variables `model_class` and `serializer_class` are required.\n
