@@ -15,8 +15,3 @@ class OnholdTimerSerializer(serializers.ModelSerializer):
     class Meta:
         model = OnholdTimer
         exclude = ['end']
-        
-class CompletedTimerSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Timer
-        fields = ['duration_ms', 'completed_at']
