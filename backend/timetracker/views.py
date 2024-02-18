@@ -76,11 +76,13 @@ class TimerAPIView(BaseAPIViewClass):
     serializer_class = TimerSerializer
     
     def get_parse_objects(self, queryset) -> models.QuerySet:
+        queryset = queryset.filter(completed_at__isnull=True)
+        
         output = []
         for record in queryset:
             record_as_dict = model_to_dict(record)
             record_as_dict.update({
-                "onhold": bool(record.active_onhold),
+                # "onhold": bool(record.active_onhold),
                 "created_at": record.created_at,
                 "completed_at": record.completed_at,
                 'project_name': record.project.name,
@@ -115,14 +117,26 @@ class OnholdTimerAPIView(BaseAPIViewClass):
         return output
 
 
-class CompletedTimerAPIView(TimerAPIView):
-    '''
-    Inherits TimerAPIView and recalls `get_parse_objects` through `super()`.
-    This is just to add a filter for all completed projects.
-    '''
-    def get_parse_objects(self, queryset:models.QuerySet) -> models.QuerySet:
+class CompletedTimerAPIView(BaseAPIViewClass):
+    model_class = Timer
+    serializer_class = TimerSerializer
+    
+    def get_parse_objects(self, queryset) -> models.QuerySet:
         queryset = queryset.filter(completed_at__isnull=False)
-        return super().get_parse_objects(queryset)
+        
+        output = []
+        for record in queryset:
+            record_as_dict = model_to_dict(record)
+            record_as_dict.update({
+                # "onhold": bool(record.active_onhold),
+                "created_at": record.created_at,
+                "completed_at": record.completed_at,
+                'project_name': record.project.name,
+                'project_description': record.project.description,
+                'project_created_at': record.project.created_at,
+            })
+            output.append(record_as_dict)
+        return output
     
     def put(self, request):
         '''
@@ -134,10 +148,6 @@ class CompletedTimerAPIView(TimerAPIView):
             timer = Timer.objects.get(id=request.data.get('timer'))
         except Timer.DoesNotExist:
             return HttpResponse(status=500)
-        
-        # Process the completion data
-        # processed_data = {**request.data}
-        # processed_data.pop('timer')
         
         date_now = datetime.now(timezone.utc)
         timer.duration_ms = (date_now - timer.created_at).seconds
