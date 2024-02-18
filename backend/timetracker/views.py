@@ -80,9 +80,10 @@ class TimerAPIView(BaseAPIViewClass):
         
         output = []
         for record in queryset:
-            record_as_dict = model_to_dict(record)
+            record_as_dict = model_to_dict(record) # all other field values
             record_as_dict.update({
                 # "onhold": bool(record.active_onhold),
+                "duration_seconds": record.compute_duration_seconds(),
                 "created_at": record.created_at,
                 "completed_at": record.completed_at,
                 'project_name': record.project.name,
@@ -128,8 +129,10 @@ class CompletedTimerAPIView(BaseAPIViewClass):
         output = []
         for record in queryset:
             record_as_dict = model_to_dict(record)
+            print(record.compute_duration_seconds())
             record_as_dict.update({
                 # "onhold": bool(record.active_onhold),
+                "duration_seconds": record.compute_duration_seconds(),
                 "created_at": record.created_at,
                 "completed_at": record.completed_at,
                 'project_name': record.project.name,
@@ -150,9 +153,8 @@ class CompletedTimerAPIView(BaseAPIViewClass):
         except Timer.DoesNotExist:
             return HttpResponse(status=500)
         
-        date_now = datetime.now(timezone.utc)
-        timer.duration_seconds = (date_now - timer.created_at).seconds
-        timer.completed_at = date_now
+        timer.completed_at = datetime.now(timezone.utc)
+        timer.duration_seconds = timer.compute_duration_seconds()
         
         timer.save(update_fields=['duration_seconds', 'completed_at'])
         

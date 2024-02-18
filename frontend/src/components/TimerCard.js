@@ -3,6 +3,13 @@ import "./Kanban.css";
 import { secondsToHours, formatDate } from "../utilityFunctions";
 
 function TimerCard({ className, timer, onClickComplete }) {
+  const hoursDisplay = (hours) => {
+    if (hours == 1) {
+      return `${hours} hour`;
+    }
+    return `${hours} hours`;
+  };
+
   const SmallNote = () => {
     return (
       <p className="small-font">
@@ -36,7 +43,7 @@ function TimerCard({ className, timer, onClickComplete }) {
   return (
     <div className={className + " kanban-card"}>
       <h2>{timer.project_name}</h2>
-      <h3 className="badge">{secondsToHours(timer.duration_ms)} hours</h3>
+      <h3 className="badge">{hoursDisplay(secondsToHours(timer.duration_seconds))}</h3>
       <p>{timer.project_description}</p>
       <SmallNote />
       <Buttons />
