@@ -4,34 +4,30 @@ import axios from "axios";
 import Kanban from "./components/Kanban";
 import Board from "./components/KanbanBoard";
 import Card from "./components/KanbanCard";
+import TimerBoard from "./components/TimerBoard";
 
-class ProjectTimeTracker extends React.Component {
-  state = { projects: [], timers: [], onhold: [], completed: [] };
+import { formatDate } from "./utilityFunctions";
+
+const urls = {
+  projects: "http://localhost:8000/projects",
+  timers: "http://localhost:8000/timers",
+  completed: "http://localhost:8000/completed",
+};
+
+export default class ProjectTimeTracker extends React.Component {
+  state = { projects: [], timers: [], completed: [] };
 
   componentDidMount() {
-    let projectsUrl = "http://localhost:8000/projects";
-    let timersUrl = "http://localhost:8000/timers";
-    let onholdUrl = "http://localhost:8000/onhold";
-    let completedUrl = "http://localhost:8000/onhold";
-
     axios
       // Fetch all projects
-      .get(projectsUrl)
+      .get(urls.projects)
       .then((response) => {
         this.setState({
           ...this.state,
           projects: response.data,
         });
         // Fetch all projects with timers
-        return axios.get(timersUrl);
-      })
-      .then((response) => {
-        this.setState({
-          ...this.state,
-          timers: response.data,
-        });
-        // Fetch all onhold project timers
-        return axios.get(onholdUrl);
+        return axios.get(urls.timers);
       })
       .then((response) => {
         this.setState({
@@ -39,7 +35,7 @@ class ProjectTimeTracker extends React.Component {
           onhold: response.data,
         });
         // Fetch all completed projects
-        return axios.get(completedUrl);
+        return axios.get(urls.completed);
       })
       .then((response) => {
         this.setState({
@@ -51,19 +47,20 @@ class ProjectTimeTracker extends React.Component {
   }
 
   render() {
-    const formatDate = (dateString, withTime) => {
-      let options = {
-        year: "numeric",
-        month: "numeric",
-        day: "numeric",
-      }
+    const handleStart = () => {
+      axios.post(urls.timers).then((response) => {
+        window.location.reload();
+      });
+    };
 
-      if (withTime) {
-        options.hour = "numeric";
-        options.minute = "numeric";
-      }
-      
-      return new Date(dateString).toLocaleString("en-US", options);
+    const handlePause = () => {};
+
+    const handleResume = () => {};
+
+    const handleComplete = () => {
+      axios.put(urls.timers).then((response) => {
+        window.location.reload();
+      });
     };
 
     return (
@@ -77,63 +74,20 @@ class ProjectTimeTracker extends React.Component {
                 <p className="small-font">
                   Created on {formatDate(project.created_at)}
                 </p>
+                <div className="button-div">
+                  <button onClick={() => handleStart(project.id)}>Start</button>
+                </div>
               </div>
             </Card>
           ))}
         </Board>
-        <Board boardName={"Ongoing"}>
-          {this.state.timers.map((timer, id) => (
-            <Card className="ongoing-card" key={id}>
-              <div>
-                <h2>{timer.project_name}</h2>
-                <h3 className="badge">{timer.duration} hours</h3>
-                <p>{timer.project_description}</p>
-                <p className="small-font">
-                  Started at {formatDate(timer.created_at, true)}
-                  <br></br>
-                  Created on {formatDate(timer.project_created_at)}
-                </p>
-              </div>
-            </Card>
-          ))}
-        </Board>
-        <Board boardName={"On Hold"}>
-          {this.state.onhold.map((timer, id) => (
-            <Card className="onhold-card" key={id}>
-              <div>
-                <h2>{timer.project_name}</h2>
-                <h3 className="badge">{timer.duration} hours</h3>
-                <p>{timer.project_description}</p>
-                <p className="small-font">
-                  Started at {formatDate(timer.created_at, true)}
-                  <br></br>
-                  Created on {formatDate(timer.project_created_at)}
-                </p>
-              </div>
-            </Card>
-          ))}
-        </Board>
-        <Board boardName={"Completed"}>
-          {this.state.completed.map((timer, id) => (
-            <Card key={id}>
-              <div>
-                <h2>{timer.project_name}</h2>
-                <h3 className="badge">{timer.duration} hours</h3>
-                <p>{timer.project_description}</p>
-                <p className="small-font">
-                  Started at {formatDate(timer.created_at, true)}
-                  <br></br>
-                  Completed at {formatDate(timer.completed_at, true)}
-                  <br></br>
-                  Created on {formatDate(timer.project_created_at)}
-                </p>
-              </div>
-            </Card>
-          ))}
-        </Board>
+        <TimerBoard
+          boardName={"Ongoing"}
+          timers={this.state.timers}
+          onClickComplete={handleComplete}
+        />
+        <TimerBoard boardName={"Completed"} timers={this.state.completed} />
       </Kanban>
     );
   }
 }
-
-export default ProjectTimeTracker;

@@ -36,3 +36,22 @@
     transform: rotate(360deg);
   }
 }
+
+/* Additional CSS */
+
+button {
+  padding: 5px 15px;
+  cursor: pointer;
+  background-color: rgba(255,255,255, 0.3);
+  border: 0;
+  font-weight: bold;
+  color: white;
+  border-radius: 20px;
+}
+
+.button-div {
+  display: flex;
+  justify-content: end;
+  width: 100%;
+  margin-bottom: 0.75em;
+}
