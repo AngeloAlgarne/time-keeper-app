@@ -12,7 +12,7 @@ class Timer(models.Model):
     project = models.OneToOneField(Project, on_delete=models.CASCADE)
     date_ref = models.DateTimeField(default=datetime.now, blank=True, verbose_name='Date Reference')
     active_onhold = models.ForeignKey('OnholdTimer', on_delete=models.PROTECT, null=True, blank=True)
-    duration_ms = models.BigIntegerField(default=0, blank=True)
+    duration_seconds = models.BigIntegerField(default=0, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     completed_at = models.DateTimeField(null=True, blank=True)
     

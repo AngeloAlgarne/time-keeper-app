@@ -1,6 +1,8 @@
-# from django.shortcuts import render
+from datetime import datetime, timezone
+
 from django.forms.models import model_to_dict
 from django.db import models
+from django.http import HttpResponse
 from rest_framework import views, response, serializers, generics
 
 from .models import Project, Timer, OnholdTimer
@@ -74,11 +76,13 @@ class TimerAPIView(BaseAPIViewClass):
     serializer_class = TimerSerializer
     
     def get_parse_objects(self, queryset) -> models.QuerySet:
+        queryset = queryset.filter(completed_at__isnull=True)
+        
         output = []
         for record in queryset:
             record_as_dict = model_to_dict(record)
             record_as_dict.update({
-                "onhold": bool(record.active_onhold),
+                # "onhold": bool(record.active_onhold),
                 "created_at": record.created_at,
                 "completed_at": record.completed_at,
                 'project_name': record.project.name,
@@ -103,7 +107,7 @@ class OnholdTimerAPIView(BaseAPIViewClass):
         for record in queryset:
             record_as_dict = model_to_dict(record)
             record_as_dict.update({
-                'duration_ms': record.main_timer.duration_ms,
+                'duration_seconds': record.main_timer.duration_seconds,
                 'created_at': record.main_timer.created_at,
                 'project_name': record.main_timer.project.name,
                 'project_description': record.main_timer.project.description,
@@ -113,11 +117,43 @@ class OnholdTimerAPIView(BaseAPIViewClass):
         return output
 
 
-class CompletedTimerAPIView(TimerAPIView):
-    '''
-    Inherits TimerAPIView and recalls `get_parse_objects` through `super()`.
-    This is just to add a filter for all completed projects.
-    '''
-    def get_parse_objects(self, queryset:models.QuerySet) -> models.QuerySet:
+class CompletedTimerAPIView(BaseAPIViewClass):
+    model_class = Timer
+    serializer_class = TimerSerializer
+    
+    def get_parse_objects(self, queryset) -> models.QuerySet:
         queryset = queryset.filter(completed_at__isnull=False)
-        return super().get_parse_objects(queryset)
+        
+        output = []
+        for record in queryset:
+            record_as_dict = model_to_dict(record)
+            record_as_dict.update({
+                # "onhold": bool(record.active_onhold),
+                "created_at": record.created_at,
+                "completed_at": record.completed_at,
+                'project_name': record.project.name,
+                'project_description': record.project.description,
+                'project_created_at': record.project.created_at,
+            })
+            output.append(record_as_dict)
+        return output
+    
+    def put(self, request):
+        '''
+        Process PUT requests
+        '''
+        
+        # Fetch timer
+        try:
+            timer = Timer.objects.get(id=request.data.get('timer'))
+        except Timer.DoesNotExist:
+            return HttpResponse(status=500)
+        
+        date_now = datetime.now(timezone.utc)
+        timer.duration_seconds = (date_now - timer.created_at).seconds
+        timer.completed_at = date_now
+        
+        timer.save(update_fields=['duration_seconds', 'completed_at'])
+        
+        serializer = self.serializer_class(timer)
+        return response.Response(serializer.data)
