@@ -73,12 +73,22 @@ export default class ProjectTimeTracker extends React.Component {
                 <p className="small-font">
                   Created on {formatDate(project.created_at)}
                 </p>
+                <div className="button-div">
+                  <button onClick={handleStart}>Start</button>
+                </div>
               </div>
             </Card>
           ))}
         </Board>
-        <TimerBoard boardName={"Ongoing"} timers={this.state.timers} />
-        <TimerBoard boardName={"Completed"} timers={this.state.completed} completed={true} />
+        <TimerBoard
+          boardName={"Ongoing"}
+          timers={this.state.timers}
+          onClickComplete={handleComplete}
+        />
+        <TimerBoard
+          boardName={"Completed"}
+          timers={this.state.completed}
+        />
       </Kanban>
     );
   }

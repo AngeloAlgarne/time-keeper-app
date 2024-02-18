@@ -1,7 +1,7 @@
 import "./Kanban.css";
 import TimerCard from "./TimerCard";
 
-function TimerBoard({ boardName, timers }) {
+function TimerBoard({ boardName, timers, onClickComplete }) {
   return (
     <div className="kanban-board">
       <h3 className="board-name">{boardName}</h3>
@@ -10,6 +10,7 @@ function TimerBoard({ boardName, timers }) {
           className={timer.onhold ? "" : "ongoing-card"}
           key={id}
           timer={timer}
+          onClickComplete={onClickComplete}
         />
       ))}
     </div>
